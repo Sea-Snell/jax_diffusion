@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  jax_diffusion:
+    build: .
+    volumes:
+     - "./:/app/jax_diffusion/"
+    working_dir: /app/
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1'
+    #       memory: 16g
+    #     reservations:
+    #       cpus: '1'
+    #       memory: 16g
