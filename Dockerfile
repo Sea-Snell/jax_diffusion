@@ -55,6 +55,6 @@ RUN rm -rf environment.yml
 RUN conda init bash
 RUN echo "conda activate jax_diffusion" >> ~/.bashrc
 SHELL ["conda", "run", "--no-capture-output", "-n", "jax_diffusion", "/bin/bash", "-c"]
-RUN pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases/jax_releases.html
+RUN pip install --upgrade pip && pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
 SHELL ["/bin/bash", "--login", "-c"]
 RUN source ~/.bashrc
