@@ -11,7 +11,7 @@ dependencies:
   - chex==0.1.3
   - mnist==0.2.2
   - torch==1.11
-  - micro-config==0.1.1
+  - micro-config==0.1.2
   - tqdm==4.64.0
   - wandb==0.12.18
   - "jax[cpu]"

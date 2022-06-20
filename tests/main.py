@@ -1,6 +1,7 @@
 from mnist_test.logs import CombineLogs, LogTuple
 import numpy as np
 import jax.numpy as jnp
+import jax
 from chex import fake_jit
 
 if __name__ == "__main__":

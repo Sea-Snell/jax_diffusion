@@ -1,5 +1,6 @@
-from base_configs import MNISTDataConfig, MLPConfig, AdamWConfig, RNGSeed, MNISTPerNumberEvaluatorConfig
-from train_loop import TrainLoop
+from base_configs import MNISTDataConfig, MLPConfig, AdamWConfig, project_root
+from haiku_configs import RNGSeed
+from train_loop import TrainLoop, StandardaEvaluator
 from micro_config import MetaConfig, deep_replace, parse_args
 import os
 
@@ -12,11 +13,9 @@ model = MLPConfig(
     shapes=[28*28, 128, 128, 10], 
     dropout=0.5, 
     rng=seed.split(1), 
-    checkpoint_path='outputs/mnist_test/model.pkl', 
-)
-
-evaluator = MNISTPerNumberEvaluatorConfig(
-    rng=seed.split(2), 
+    checkpoint_path=None, 
+    params=None, 
+    state=None, 
 )
 
 optim = AdamWConfig(
@@ -24,13 +23,23 @@ optim = AdamWConfig(
     weight_decay=0.00, 
     grad_accum_steps=1, 
     model=model, 
-    state_path='outputs/mnist_test/optim.pkl', 
+    state_path=None, 
+    optim_state=None, 
+)
+
+evaluator = StandardaEvaluator(
+    eval_data=eval_data, 
+    model=model, 
+    rng=seed.split(2), 
+    bsize=32, 
+    eval_batches=1, 
+    dataloader_workers=0, 
+    loss_kwargs={}, 
 )
 
 train = TrainLoop(
     model=model, 
     train_data=train_data, 
-    eval_data=eval_data, 
     optim=optim, 
     evaluator=evaluator, 
     rng=seed.split(3), 
@@ -39,8 +48,6 @@ train = TrainLoop(
     epochs=10, 
     max_steps=None, 
     bsize=32, 
-    eval_bsize=32, 
-    eval_batches=None, 
     log_every=4096, 
     eval_every=4096, 
     save_every=None, 
@@ -53,8 +60,8 @@ train = TrainLoop(
 
 if __name__ == "__main__":
     metaconfig = MetaConfig(
-        project_root=os.path.join(os.path.dirname(__file__)), 
-        verbose=True, 
+        project_root=project_root, 
+        verbose=False, 
     )
     train = deep_replace(train, **parse_args())
     train.unroll(metaconfig)
