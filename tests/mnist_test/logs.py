@@ -38,9 +38,9 @@ def reduce_elements(x):
 
 def combine_elements(a, b):
     if is_scalar(a):
-        a = LogTuple(a, 1,)
+        a = LogTuple(a, 1)
     if is_scalar(b):
-        b = LogTuple(b, 1,)
+        b = LogTuple(b, 1)
     if isinstance(a, LogTuple) and isinstance(b, LogTuple):
         if (a.count + b.count) == 0:
             return LogTuple(0.0, 0)

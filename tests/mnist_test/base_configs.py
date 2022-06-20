@@ -1,16 +1,14 @@
 from __future__ import annotations
 from functools import partial
-from typing import List, Optional
+from typing import List
 from micro_config import ConfigScript, MetaConfig
 from haiku_configs import ConfigScriptModel, ConfigScriptOptim, ModelConfigReturn
 from dataclasses import dataclass
 import mnist
 import haiku as hk
-import jax
 import jax.numpy as jnp
-import pickle as pkl
 import optax
-from src import MLP, MNISTData
+from src import MLP, MNISTCNN, MNISTData
 import os
 
 project_root = os.path.dirname(__file__)
@@ -41,6 +39,12 @@ class MLPConfig(ConfigScriptModel):
     def unroll(self, metaconfig: MetaConfig) -> ModelConfigReturn:
         model = hk.multi_transform_with_state(partial(MLP.multi_transform_f, self.shapes[1:], self.dropout))
         return ModelConfigReturn(model, (jnp.zeros((1, self.shapes[0],)),), {'train': True})
+
+@dataclass
+class MNISTCNNConfig(ConfigScriptModel):
+    def unroll(self, metaconfig: MetaConfig) -> ModelConfigReturn:
+        model = hk.multi_transform_with_state(MNISTCNN.multi_transform_f)
+        return ModelConfigReturn(model, (jnp.zeros((1, 28*28,)),), {'train': True})
 
 @dataclass
 class AdamWConfig(ConfigScriptOptim):

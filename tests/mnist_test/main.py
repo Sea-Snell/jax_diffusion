@@ -1,15 +1,14 @@
-from base_configs import MNISTDataConfig, MLPConfig, AdamWConfig, project_root
+from base_configs import MNISTDataConfig, MLPConfig, MNISTCNNConfig, AdamWConfig, project_root
 from haiku_configs import RNGSeed
 from train_loop import TrainLoop, StandardaEvaluator
 from micro_config import MetaConfig, deep_replace, parse_args
-import os
 
 seed = RNGSeed(0)
 
 train_data = MNISTDataConfig(split='train')
 eval_data = MNISTDataConfig(split='test')
 
-model = MLPConfig(
+mlp_model = MLPConfig(
     shapes=[28*28, 128, 128, 10], 
     dropout=0.5, 
     rng=seed.split(1), 
@@ -17,6 +16,15 @@ model = MLPConfig(
     params=None, 
     state=None, 
 )
+
+cnn_model = MNISTCNNConfig(
+    rng=seed.split(2), 
+    checkpoint_path=None, 
+    params=None, 
+    state=None
+)
+
+model = cnn_model
 
 optim = AdamWConfig(
     lr=3e-4, 
@@ -30,7 +38,7 @@ optim = AdamWConfig(
 evaluator = StandardaEvaluator(
     eval_data=eval_data, 
     model=model, 
-    rng=seed.split(2), 
+    rng=seed.split(3), 
     bsize=32, 
     eval_batches=1, 
     dataloader_workers=0, 
@@ -42,8 +50,8 @@ train = TrainLoop(
     train_data=train_data, 
     optim=optim, 
     evaluator=evaluator, 
-    rng=seed.split(3), 
-    save_dir='outputs/mnist_test/', 
+    rng=seed.split(4), 
+    save_dir=None, 
     max_checkpoints=1, 
     epochs=10, 
     max_steps=None, 
@@ -54,7 +62,7 @@ train = TrainLoop(
     dataloader_workers=0, 
     jit=True, 
     use_wandb=False, 
-    wandb_project='jax_mnist_test', 
+    wandb_project='haiku_mnist_test', 
     loss_kwargs={}, 
 )
 

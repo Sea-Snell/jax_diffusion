@@ -7,7 +7,6 @@ from torch.utils.data import DataLoader
 from collections import deque
 import jax
 import os
-import json
 import pickle as pkl
 import optax
 import chex
@@ -15,6 +14,7 @@ from logs import label_logs, pool_logs, reduce_logs, log
 from tqdm.auto import tqdm
 import wandb
 from haiku_configs import ConfigScriptModel, ConfigScriptOptim, ConfigScriptRNG
+import json
 
 @dataclass
 class StandardaEvaluator(ConfigScriptNoCache):
@@ -90,6 +90,7 @@ class TrainLoop(ConfigScript):
 
     def unroll(self, metaconfig: MetaConfig):
         print('using config:', asdict(self))
+        print('using device:', jax.devices()[0])
         
         # save configs
         save_dir = metaconfig.convert_path(self.save_dir)
